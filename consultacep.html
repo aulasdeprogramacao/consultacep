@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro com Consulta de CEP</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Importando jQuery para facilitar requisições AJAX -->
+</head>
+<body>
+  <h2>Cadastro com Consulta de CEP</h2>
+  
+  <form id="cadastroForm">
+    <label for="cep">CEP:</label>
+    <input type="text" id="cep" name="cep" maxlength="9" required>
+    <button type="button" onclick="consultaCEP()">Buscar CEP</button>
+    <br><br>
+    
+    <label for="logradouro">Logradouro:</label>
+    <input type="text" id="logradouro" name="logradouro" readonly>
+    <br><br>
+    
+    <label for="cidade">Cidade:</label>
+    <input type="text" id="cidade" name="cidade" readonly>
+    <br><br>
+    
+    <label for="estado">Estado:</label>
+    <input type="text" id="estado" name="estado" readonly>
+    <br><br>
+    
+    <label for="complemento">Complemento:</label>
+    <input type="text" id="complemento" name="complemento">
+    <br><br>
+    
+    <label for="bairro">Bairro:</label>
+    <input type="text" id="bairro" name="bairro" readonly>
+    <br><br>
+    
+    <label for="numero">Número:</label>
+    <input type="text" id="numero" name="numero">
+    <br><br>
+    
+    <button type="submit">Cadastrar</button>
+  </form>
+
+  <script>
+    function consultaCEP() {
+      var cep = document.getElementById('cep').value;
+      cep = cep.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+      if (cep.length != 8) {
+        alert('CEP inválido. Verifique e tente novamente.');
+        return;
+      }
+
+      $.getJSON(`https://viacep.com.br/ws/${cep}/json/`, function(data) {
+        if (!("erro" in data)) {
+          document.getElementById('logradouro').value = data.logradouro;
+          document.getElementById('cidade').value = data.localidade;
+          document.getElementById('estado').value = data.uf;
+          document.getElementById('bairro').value = data.bairro;
+          document.getElementById('complemento').focus(); // Move o foco para o próximo campo
+        } else {
+          alert('CEP não encontrado. Verifique e tente novamente.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
